@@ -1,0 +1,76 @@
+---
+title: "Random Forest Classification Results"
+#author: "Sara Moatti"
+#date: "18/09/2021"
+output: html_document
+---
+
+Following the RandomForest Classification, the severe damage class (target class) is of interest. below is an interactive map showing Severe Damages Pixels Density per Operational Zone. Density is calculated using the 'Severe Damage' class pixels count obtained from QGIS using the zonal statistics plugin. 
+
+
+## Severe Damage Class Density Map
+
+
+```{r message=FALSE, warning=FALSE}
+library(spatstat)
+library(here)
+library(sp)
+library(rgeos)
+library(maptools)
+library(GISTools)
+library(tmap)
+library(sf)
+library(geojson)
+library(geojsonio)
+library(tmaptools)
+library(dplyr)
+library(stringr)
+library(readr)
+library(rgdal)
+library(tmap)
+library(janitor)
+library(ggplot2)
+library(raster)
+library(fpc)
+library(dbscan)
+library(tidyverse)
+library(tidyr)
+
+#get the shapefile
+Raster_cell_count_per_zones <-
+  st_read(here::here("data", "Raster_cell_count_per_zones.shp"))
+ 
+#get the density
+
+density<-Raster_cell_count_per_zones%>%
+  #calculate area
+  mutate(area=st_area(.))%>%
+  #then density of the points per ward
+  mutate(density_raster=z_count/area)%>%
+  #select density and some other variables
+  dplyr::select(density_raster, zone_numbe, Cadaster_1,z_count)
+
+
+tmap_mode("view")
+#breaks = c(4, 4.15, 4.3, 4.45, 4.6,4.757)
+
+breaks = c(4.7495,4.7510,4.7515,4.7520,4.7525,4.7530,4.7535,4.7540,4.7545,4.7550,4.7555,4.7560,4.7565)
+
+dm1 <- tm_shape(density) +
+  tm_borders("white")+
+  tm_polygons("density_raster",
+              title = "Severe Damage Density",
+              breaks=breaks,
+              palette="BuPu",
+              alpha = 0.7,
+              style = "cont",
+              border.col = "white") +
+  tm_scale_bar(position=c(0.01,0.1),text.size=0.5,color.dark = "grey46")+
+  tm_layout(title = "Severe Damage Pixels Density per Operational Zone",title.size = 2,frame=FALSE)
+
+dm1
+
+
+
+
+```
