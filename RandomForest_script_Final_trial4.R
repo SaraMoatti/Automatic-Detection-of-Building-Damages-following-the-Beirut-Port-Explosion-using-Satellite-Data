@@ -1,4 +1,6 @@
 #############################################################################
+# Code is adapted from:
+# https://bitbucket.org/rsbiodiv/randomforestclassification/src/master/rf_classification.R 
 # The script reads an ESRI Shapefile (defined by the "shapefile" variable) with 
 # training polygons and then either select all pixels or randomly select a 
 # user-determined number of samples (defied by the "numsamps" variable) from 
